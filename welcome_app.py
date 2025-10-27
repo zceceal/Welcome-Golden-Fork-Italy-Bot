@@ -20,16 +20,16 @@ app = Flask(__name__)
 SECTION_LINKS = {
     "info":                     "https://t.me/c/3239080709/2/1",
     "discounts":                "https://t.me/c/3239080709/11/1",
-    "reviews":                  "https://t.me/c/3056610802/3/1",
-    "giveaways":                "https://t.me/c/3056610802/13/1",
-    "announce":                 "https://t.me/c/3056610802/7/1",
+    "reviews":                  "https://t.me/c/3239080709/3/1",
+    "giveaways":                "https://t.me/c/3239080709/13/1",
+    "announce":                 "https://t.me/c/3239080709/7/1",
 }
 
 # --- Utility: internal "t.me/c" id from chat_id ---
 def internal_chat_id(chat_id: int) -> str:
     """
     Per supergruppi/canali, t.me/c/<internal>/<msg_id> usa chat_id senza il prefisso '-100'.
-    Esempio: chat_id = -1003056610802 -> internal '3056610802'
+    Esempio: chat_id = -1003056610802 -> internal '3239080709'
     """
     s = str(chat_id)
     return s[4:] if s.startswith("-100") else s.lstrip("-")
@@ -49,7 +49,7 @@ def welcome_new_member(message):
     global PINNED_MSG_ID
 
     print(f"👋 New members: {[m.id for m in message.new_chat_members]}")
-    
+
     # Colleziona i nomi dei nuovi membri
     new_names = []
     for new_member in message.new_chat_members:
