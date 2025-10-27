@@ -18,10 +18,11 @@ app = Flask(__name__)
 
 # --- SEZIONI (aggiorna con i tuoi link Telegram) ---
 SECTION_LINKS = {
-    "info":       "https://t.me/c/3239080709/2/1",
-    "reviews":    "https://t.me/c/3056610802/3/1",
-    "giveaways":  "https://t.me/c/3056610802/13/1",
-    "announce":   "https://t.me/c/3056610802/7/1",
+    "info":                     "https://t.me/c/3239080709/2/1",
+    "discounts":                "https://t.me/c/3239080709/11/1",
+    "reviews":                  "https://t.me/c/3056610802/3/1",
+    "giveaways":                "https://t.me/c/3056610802/13/1",
+    "announce":                 "https://t.me/c/3056610802/7/1",
 }
 
 # --- Utility: internal "t.me/c" id from chat_id ---
@@ -47,6 +48,8 @@ PINNED_MSG_ID = None
 def welcome_new_member(message):
     global PINNED_MSG_ID
 
+    print(f"👋 New members: {[m.id for m in message.new_chat_members]}")
+    
     # Colleziona i nomi dei nuovi membri
     new_names = []
     for new_member in message.new_chat_members:
@@ -58,7 +61,7 @@ def welcome_new_member(message):
 
     # 🇮🇹 Messaggio di benvenuto
     welcome_text = (
-        f"✨ Benvenutə in Golden Fork, {joined_text}! ✨\n"
+        f"✨ Benvenuti in Golden Fork, {joined_text}! ✨\n"
         f"Il posto dove ogni prenotazione significa 50€ di risparmio.\n\n"
         f"👉 Per iniziare, scegli un’opzione qui sotto:"
     )
@@ -69,8 +72,8 @@ def welcome_new_member(message):
     # Pulsanti principali
     markup = types.InlineKeyboardMarkup()
     markup.add(
-        types.InlineKeyboardButton("ℹ️ Info Servizio", url=SECTION_LINKS["info"]),
-        types.InlineKeyboardButton("❗ Regole",         url=SECTION_LINKS["rules"])
+        types.InlineKeyboardButton("ℹ️ Info Servizio",   url=SECTION_LINKS["info"]),
+        types.InlineKeyboardButton("❗ Sconti Multipli", url=SECTION_LINKS["discounts"])
     )
     markup.add(
         types.InlineKeyboardButton("⭐ Recensioni",     url=SECTION_LINKS["reviews"]),
