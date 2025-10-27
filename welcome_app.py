@@ -85,7 +85,7 @@ def welcome_new_member(message):
     markup.add(
         # Deep link che apre il bot e avvia il flusso
         types.InlineKeyboardButton("🍴 Prenota con 50€ di sconto",
-                                url="https://t.me/axel_fork_bot?start=reserve")
+                                url="https://t.me/GoldenForkBookingsBot?start=reserve")
     )
 
     kwargs = {}
