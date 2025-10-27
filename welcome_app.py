@@ -18,10 +18,10 @@ app = Flask(__name__)
 
 # Section links (update with your actual Telegram post links)
 SECTION_LINKS = {
-    "info_servizio": "https://t.me/c/3056610802/7/1",
-    "recensioni":    "https://t.me/c/3056610802/3/1",
-    "giveaway":      "https://t.me/c/3056610802/2/1",
-    "annunci":       "https://t.me/c/3056610802/9/1",
+    "info_servizio": "https://t.me/c/3239080709/2",
+    "recensioni":    "https://t.me/c/3239080709/3",
+    "giveaway":      "https://t.me/c/3239080709/13",
+    "annunci":       "https://t.me/c/3239080709/7",
 }
 
 # --- Utility: internal "t.me/c" id from chat_id ---
@@ -76,7 +76,7 @@ def welcome_new_member(message):
         types.InlineKeyboardButton("📢 Annunci", url=SECTION_LINKS["annunci"])
     )
     markup.add(
-        types.InlineKeyboardButton("🍴 Fai il tuo ordine – Prenota con £50 di sconto",
+        types.InlineKeyboardButton("🍴 Prenota con 50€ di sconto",
                                 url="https://t.me/axel_fork_bot?start=reserve")
     )
 
