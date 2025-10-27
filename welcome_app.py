@@ -16,14 +16,6 @@ bot = TeleBot(BOT_TOKEN, parse_mode="HTML")
 
 app = Flask(__name__)
 
-# Section links (update with your actual Telegram post links)
-SECTION_LINKS = {
-    "info_servizio": "https://t.me/c/3239080709/2",
-    "recensioni":    "https://t.me/c/3239080709/3",
-    "giveaway":      "https://t.me/c/3239080709/13",
-    "annunci":       "https://t.me/c/3239080709/7",
-}
-
 # --- Utility: internal "t.me/c" id from chat_id ---
 def internal_chat_id(chat_id: int) -> str:
     """
@@ -39,78 +31,49 @@ def chat_link_base(chat):
         return f"https://t.me/{chat.username}"
     return f"https://t.me/c/{internal_chat_id(chat.id)}"
 
-# Global variable to store pinned message ID
-PINNED_MSG_ID = None
-
 # --- WELCOME HANDLER ---
 @bot.message_handler(content_types=['new_chat_members'])
 def welcome_new_member(message):
-    global PINNED_MSG_ID
+    base = chat_link_base(message.chat)
 
-    # Collect all new members' names
-    new_names = []
+    # Inline buttons (update message IDs with yours)
+    markup = types.InlineKeyboardMarkup()
+    markup.add(
+        types.InlineKeyboardButton("ℹ️ Info Servizio", url=f"{base}/2"),
+        types.InlineKeyboardButton("⭐ Recensioni", url=f"{base}/3")
+    )
+    markup.add(
+        types.InlineKeyboardButton("🎁 Giveaway", url=f"{base}/13"),
+        types.InlineKeyboardButton("📢 Annunci", url=f"{base}/7")
+    )
+    markup.add(
+        types.InlineKeyboardButton("🍴 Prenota con 50€ di sconto", url="https://t.me/axel_fork_bot")
+    )
+
+    # Welcome each new member
     for new_member in message.new_chat_members:
         display_name = (new_member.first_name or "ospite").strip()
         mention = f'<a href="tg://user?id={new_member.id}">{html.escape(display_name)}</a>'
-        new_names.append(mention)
 
-    joined_text = ", ".join(new_names)
+        welcome_text = (
+            f"✨ Benvenutə in Golden Fork, {mention}! ✨\n"
+            f"Il posto dove ogni prenotazione significa £50 di risparmio.\n\n"
+            f"<b>Sezioni principali</b>:\n"
+            f"ℹ️ Info Servizio | ⭐ Recensioni | 🎁 Giveaway | 📢 Annunci\n\n"
+            f"👉 Per iniziare, scegli un’opzione qui sotto:"
+        )
 
-    # 🇮🇹 Italian welcome message
-    welcome_text = (
-        f"✨ Benvenuti in Golden Fork, {joined_text}! ✨\n"
-        f"Il posto dove ogni prenotazione significa £50 di risparmio.\n\n"
-        f"👉 Per iniziare, scegli un’opzione qui sotto:"
-    )
+        kwargs = {}
+        if getattr(message, "message_thread_id", None):
+            kwargs["message_thread_id"] = message.message_thread_id
 
-    base = chat_link_base(message.chat)
-
-    # Inline buttons for main topics
-    markup = types.InlineKeyboardMarkup()
-    markup.add(
-        types.InlineKeyboardButton("ℹ️ Info Servizio", url=SECTION_LINKS["info_servizio"]),
-        types.InlineKeyboardButton("⭐ Recensioni", url=SECTION_LINKS["recensioni"])
-    )
-    markup.add(
-        types.InlineKeyboardButton("🎁 Giveaway", url=SECTION_LINKS["giveaway"]),
-        types.InlineKeyboardButton("📢 Annunci", url=SECTION_LINKS["annunci"])
-    )
-    markup.add(
-        types.InlineKeyboardButton("🍴 Prenota con 50€ di sconto",
-                                url="https://t.me/axel_fork_bot?start=reserve")
-    )
-
-    kwargs = {}
-    if getattr(message, "message_thread_id", None):
-        kwargs["message_thread_id"] = message.message_thread_id
-
-    if PINNED_MSG_ID is None:
-        sent = bot.send_message(
+        bot.send_message(
             message.chat.id,
             welcome_text,
             reply_markup=markup,
             disable_web_page_preview=True,
-            disable_notification=True,
             **kwargs
         )
-        PINNED_MSG_ID = sent.message_id
-
-        try:
-            bot.pin_chat_message(message.chat.id, PINNED_MSG_ID, disable_notification=True)
-            print(f"📌 Successfully pinned message {PINNED_MSG_ID}")
-        except Exception as e:
-            print(f"⚠️ Failed to pin message: {e}")
-    else:
-        try:
-            bot.edit_message_text(
-                chat_id=message.chat.id,
-                message_id=PINNED_MSG_ID,
-                text=welcome_text,
-                reply_markup=markup,
-                disable_web_page_preview=True
-            )
-        except Exception as e:
-            print(f"⚠️ Could not edit pinned message: {e}")
 
 # --- Flask / webhook ---
 @app.get("/health")
